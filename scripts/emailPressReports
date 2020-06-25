@@ -1,0 +1,49 @@
+#!/bin/bash
+
+pdfFiles="$HOME/Dropbox/PressReports/pdf_files/"
+texFiles="$HOME/Dropbox/PressReports/tex_files/"
+
+pdfSent="$HOME/Dropbox/PressReports/pdf_files/sent"
+texSent="$HOME/Dropbox/PressReports/tex_files/sent"
+
+cd $HOME/Dropbox/PressReports
+
+
+email_FLAG=false
+
+clear
+
+for file in *.pdf; do
+    if [ -e $file ]; then
+        email_FLAG=true
+        mv $file $pdfFiles$file
+    else
+        echo "No pdf files to move!"
+    fi
+done
+
+for file in *.tex; do
+    if [ -e $file ]; then
+        mv $file $texFiles$file
+    else
+        echo "No tex files to move!"
+    fi
+done
+
+
+if [ $email_FLAG = true ];then
+    echo "Emailing Reports"
+    email_PressReports.py
+    echo "Finish Emailing Reports!!!"
+
+    echo "cleaning up"
+
+    mv $texFiles/*.tex $texSent
+    mv $pdfFiles/*.pdf $pdfSent
+else
+    echo "Sorry, Nothing to email"
+fi
+
+
+
+cd $HOME

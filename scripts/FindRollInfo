@@ -1,0 +1,19 @@
+#!/bin/bash
+
+HomeDir=$HOME/Dropbox/PressReports/
+
+ack --nobreak -h --type tex "([A-Z0-9]{8,})" ${HomeDir} |
+    awk -F{ '{print $5,$3}' |
+    sed 's/}//g' |
+    sort |
+    uniq
+
+#set $choice
+#
+#IFS=' ' # space is set as delimiter
+#read -ra ADDR <<< "$choice" # str is read into an array as tokens separated by IFS
+#
+#roll=${ADDR[0]}
+#size=${ADDR[1]}
+#
+#echo -e "\RollInfo{$size}{<++>}{<++>}{$roll}\n    <++>"

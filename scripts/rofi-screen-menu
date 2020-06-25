@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+#declare -a list=(lock logout suspend hibernate reboot shutdown)
+declare -a list=(HDMI Laptop Both)
+
+
+selected=$((for f in "${list[@]}";do echo -e "$f "; done;) | rofi -dmenu -theme exit -p "Choose")
+
+xrandr_screen $selected

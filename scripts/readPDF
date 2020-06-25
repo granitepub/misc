@@ -1,0 +1,100 @@
+#!/bin/python
+
+import PyPDF2
+import re
+import sys
+import os
+
+os.system('clear')
+
+colorPages=[]
+numPages=0
+linesToWrite=[]
+
+def addLines(line):
+    linesToWrite.append(line)
+
+def checkColor(line):
+    if 'PROC' in line:
+        return True
+
+def checkPages(line):
+    if '-' in line and 'FileIssueDate' not in line and ',' not in line:
+        newLine=re.sub(r'.*-','-', line)
+        newLine=re.sub(r'[0-9].*','', newLine)
+        if len(newLine) > 1:
+            return newLine
+
+def printHeader(file):
+    addLines(file)
+    addLines('-----------------------------')
+
+def printFooter():
+    colorPages.sort()
+    addLines('-----------------------------')
+    addLines("Total Number of pages " + str(numPages))
+    strColorPages=[str(a) for a in colorPages]
+    addLines('Color on pages ' + ', '.join(strColorPages))
+    addLines("\n")
+
+def readDataFile(file):
+    global numPages
+    global colorPages
+
+    pdfFileObj = open(file, 'rb')
+
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+
+    numPages=pdfReader.numPages
+
+    for page in range(0, numPages):
+        pageObj = pdfReader.getPage(page)
+        text = pageObj.extractText().splitlines()
+        for line in text:
+            if checkColor(line):
+                colorPages.append(page+1)
+                break
+
+    if not colorPages:
+        colorPages.append(1)
+    if 1 not in colorPages:
+        colorPages.append(1)
+
+    for page in range(0, numPages):
+        pageObj = pdfReader.getPage(page)
+        text = pageObj.extractText().splitlines()
+        for line in text:
+            newLine=checkPages(line) 
+            if newLine:
+                if page+1 in colorPages:
+                    addLines("COLOR\t" + str(page+1) +  newLine)
+                    break
+                else:
+                    addLines("\t" + str(page+1) + newLine)
+                    break
+
+    pdfFileObj.close()
+
+def printOutput():
+    for line in linesToWrite:
+        print(line)
+
+def writeOutput(file):
+    file1 = open(os.path.splitext(file)[0] + ".txt","w")
+    for line in linesToWrite:
+        file1.write(line + "\n")
+    file1.close()
+
+def main():
+    file=sys.argv[1]
+    printHeader(file)
+    readDataFile(file)
+    printFooter()
+
+    printOutput()
+    writeOutput(file)
+
+if __name__ == "__main__":
+    main()
+
+

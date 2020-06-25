@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# The following command could also be used to remove extension
+#f=$(basename "$@" .pdf).txt
+f="${@%%.*}.txt"
+
+
+clear
+
+
+
+echo "---------------------------------------"
+echo "Press Report Info for $@"
+echo "---------------------------------------"
+pdfgrep -A6 "LAYOUT - " "$@" | grep "[0-9]-" | sed 's/^ *//g' | sed -e's/  */ /g' | cut -d " " -f2
+echo "------ Color pages --------"
+pdfgrep -p PROC "$@" | cut -d ":" -f1
+
+
+#echo "---------------------------------------" > "$f"
+#echo "Press Report Info for $@" >> "$f"
+#echo "---------------------------------------" >> "$f"
+#pdfgrep -A6 "LAYOUT - " "$@" | grep "[0-9]-" | sed 's/^ *//g' | sed -e's/  */ /g' | cut -d " " -f2 >> "$f"
+#echo "------ Color pages --------" >> "$f"
+#pdfgrep -p PROC "$@" | cut -d ":" -f1 >> "$f"

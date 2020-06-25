@@ -1,0 +1,21 @@
+#!/bin/bash
+
+folder=$HOME/Dropbox/PressReports
+dest=$HOME/Dropbox/PressReports/pdf_files/sent
+
+cd $folder
+
+files=$(ls | grep '.pdf' | sort)
+
+#printf '%s\n' "${files[@]}"
+
+now="$(date +'%m%d%y')"
+
+#echo "PressReports_${now}.pdf"
+pdfunite *.pdf "PressReports_${now}.pdf"
+
+for file in $files 
+do
+    #echo move ${file} $HOME/tmp/UnitePdf_Folder/sent
+    mv ${file} ${dest}
+done

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd $HOME/Dropbox/PressReports/
+
+selected=$(ls | grep '.tex' | rofi -dmenu -theme bmenu -p "Enter Report Name: ")
+
+[[ -z $selected ]] && exit
+AutoPressReports $selected
+
+cd ~

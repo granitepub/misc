@@ -1,0 +1,8 @@
+#!/bin/bash
+
+gallons=21.429
+pounds=8.5
+mark=$1
+
+echo `expr "$gallons * $pounds * $mark" | bc -l`
+

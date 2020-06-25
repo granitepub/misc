@@ -1,0 +1,84 @@
+#!/bin/bash
+
+#      Author: Roger Delgado
+# Description: Script to connect to my home drives using sshfs with password
+#        Date: September 23, 2018
+# -------------------------------------------------------------------------------------------------
+
+
+clear # clear screen before we begin
+
+# Declare variables for script
+# -------------------------------------------------------------------------------------------------
+USERID="1000"
+#HOST="192.168.1.104"   #for Mac
+HOST="192.168.1.102"
+
+#SERVER="myg5"
+SERVER="wolverine"
+ROOTDIR1="/Volumes/MyBook_02"
+MOUNT_DIR1="$HOME/MyBook_02"
+
+#rootDrives=("/Volumes/MyBook_01" "/Volumes/MyBook_02" "/Volumes/Seagate_01")
+rootDrives=("/run/media/wolverine/MyBook_01" "/run/media/wolverine/MyBook_02" "/run/media/wolverine/Seagate_01")
+localDrives=("$HOME/MyBook_01" "$HOME/MyBook_02" "$HOME/Seagate")
+
+
+
+
+# -------------------------------------------------------------------------------------------------
+# create dir if it doesn't exists
+# -------------------------------------------------------------------------------------------------
+
+echo "==============================="
+echo " Creating Mount Points........."
+echo "==============================="
+echo
+
+for drive in "${localDrives[@]}"
+    do
+        if [ ! -d "$drive" ]; then
+            umount $drive &> /dev/null
+            mkdir $drive
+            sleep 1
+            echo "$drive Created!!!"
+            echo "==============================="
+        fi
+    done
+
+echo "           D O N E !"
+echo
+
+# -------------------------------------------------------------------------------------------------
+# to check your uid use command `id`
+# Connects to my home drives 
+# -------------------------------------------------------------------------------------------------
+
+echo
+echo "==============================="
+echo " Mounting Mac Mount Points........."
+echo "==============================="
+
+for (( n=0; n<=2; n++ ))
+do
+    #echo "${rootDrives[$n]} and ${localDrives[$n]}"
+    if mountpoint -q ${localDrives[$n]}; then
+        echo "Drive already mounted"
+    else
+        if ( sshfs -o uid=$USERID,ssh_command='ssh -i ~/.ssh/id_rsa',workaround=rename $SERVER@$HOST:${rootDrives[$n]} ${localDrives[$n]} ); then
+            echo "${localDrives[$n]} was Mounted!"
+        else
+            echo "${localDrives[$n]} was not Mounted!"
+            exit 1
+        fi
+    fi
+    done
+
+
+
+
+echo "==============================="
+echo "           D O N E !"
+echo
+echo
+echo

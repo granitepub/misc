@@ -1,0 +1,86 @@
+#!/usr/bin/python
+
+# Author -- Roger Delgado
+# Date -- November 2, 2018
+# Purpose:
+#   Needed a way to search for roll numbers with finished size.
+#   Created script to search through csv files striping needed info.
+#   Did same for tex files. Used rofi & dmenu to create a popup menu
+#   with the relavant info that I can then search through. Works really
+#   great. 
+
+# relavant imports
+import os
+import csv
+import re
+import operator
+
+
+# Declarations
+rollList = []       # Used to store info from tex files during search
+newRoll = []        # Used to store all relavant rolls
+searchPattern = "RollInfo"
+
+# Set the directory you want to start from
+rootDir_TEX = '/home/logan/Dropbox/PressReports/tex_files/'
+rootDir_CSV = '/home/logan/Dropbox/PressReports/csv/'
+
+# Define pattern for searching through csv files
+pattern = re.compile(r'[A-Z0-9]{8,}')
+
+#Define variables to exclude from searching csv files
+excluded_list = ["DEFAULTED", "INFORMATION", "PRODUCTION", "NECESSARY", "UNACCOUNTED"]
+
+
+# Search CSV files in a given directory and extract roll number and finished size
+# and then add results to newRoll list.
+def searchCSV_FILES():
+    # Set the directory you want to start from
+    for dirName, subdirList, fileList in os.walk(rootDir_CSV):
+        for fname in fileList:
+            if 'csv' in fname:
+                with open(dirName + '/' + fname, 'r') as csvFile:
+                    csvFileReader = csv.reader(csvFile, delimiter=',')
+                    for row in csvFileReader:
+                        for item in row:
+                            matches = pattern.finditer(item)
+                            for m in matches:
+                                if m.group(0) not in excluded_list:
+                                    newRoll.append((m.group(0), row[5]))
+                csvFile.close()
+
+
+def find(fName):
+    with open(fName) as fileName:
+        for line in fileName:
+            if searchPattern in line:
+                if '%' not in line:
+                    rollList.append(line[13:].rstrip())
+
+
+# Search TEX files in a given directory and extract roll number and finished size
+# and then add results to newRoll list.
+def searchTEX_FILES():
+    for dirName, subdirList, fileList in os.walk(rootDir_TEX):
+        for fileName in fileList:
+            if "tex" in fileName:
+                find(dirName + '/' + fileName)
+
+    for roll in rollList:
+        start, stop, used, roll_num = roll.replace("}{", ",").strip("{}").split(",")
+        newRoll.append((roll_num, stop))
+
+
+
+
+if __name__ == '__main__':
+    # Start the searches
+    searchCSV_FILES()
+    searchTEX_FILES()
+    
+    # sort list first by roll # then by size
+    newRoll.sort(key = operator.itemgetter(0,1))
+   
+    # output results
+    for roll, size in newRoll:
+        print(roll, '----', size)

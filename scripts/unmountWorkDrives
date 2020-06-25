@@ -1,0 +1,22 @@
+#!/bin/bash
+
+clear
+
+HIRES='HiRes'
+COMP3='Comp3'
+COMP='Comp'
+HOMEDIR='/home/logan'
+
+fusermount -u $HOMEDIR/$HIRES
+fusermount -u $HOMEDIR/$COMP3
+fusermount -u $HOMEDIR/$COMP
+sudo umount ~/Goss
+sudo umount ~/Quad
+
+#rm $HOME/Goss
+#rm $HOME/Quad
+#rm $HOME/$HIRES
+#rm $HOME/$COMP3
+#rm $HOME/$COMP
+
+echo "Drive $HIRES, $COMP3 and $Comp were Unmounted"

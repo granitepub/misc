@@ -1,0 +1,18 @@
+#!/bin/bash
+
+selected=$(echo "Mount Work Drives
+UnMount Work Drives" | rofi -dmenu -theme bmenu -p "Enter Choice: ")
+
+
+echo $selected
+
+case $selected in
+    "Mount Work Drives")
+        nohup mountWorkDrives 
+        ;;
+
+    "UnMount Work Drives")
+        urxvt -e unmountWorkDrives
+        ;;
+
+esac

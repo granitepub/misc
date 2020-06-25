@@ -1,0 +1,12 @@
+#!/bin/bash
+
+chosen=$(echo "\""$(xclip -selection c -o)"\"")
+
+#echo ${chosen}
+echo ${chosen} | xargs -l transmission-remote --add >/dev/null
+
+if [ $? -eq 0 ]; then
+   pgrep -x dunst >/dev/null && notify-send "Torrent successfully added!"
+else
+   pgrep -x dunst >/dev/null && notify-send "Torrent FAILED!"
+fi

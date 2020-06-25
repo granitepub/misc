@@ -1,0 +1,9 @@
+#!/bin/bash
+
+selected=$(rofi -dmenu -theme bmenu -p "Type Barcode to Create: ")
+[[ -z $selected ]] && exit
+
+#echo $selected
+myBarcode.py -r $selected
+
+

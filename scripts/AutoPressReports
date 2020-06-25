@@ -1,0 +1,19 @@
+#!/bin/bash
+
+TEMPLATE_FOLDER="$HOME/Dropbox/PressReports"
+TEMPLATE_FILE="$HOME/Dropbox/shell_programs/template.tex"
+
+now="$(date +'%m%d%y')"
+
+TEX_FILE="$TEMPLATE_FOLDER/${now}_${1}.tex"
+
+cd $TEMPLATE_FOLDER
+
+if [[ -f $1 ]]; then
+    st -e nvim $1
+else
+    cat $TEMPLATE_FILE > $TEX_FILE
+    st -e nvim $TEX_FILE
+fi
+
+cd ~

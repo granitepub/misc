@@ -1,0 +1,123 @@
+#!/bin/bash
+
+#==========================================================================
+#global variables
+#==========================================================================
+plate_dir="$HOME/Dropbox/PlateReports/"
+press_dir="$HOME/Dropbox/PressReports/"
+
+testing_email="dcpressroom1@gmail.com, dixiepub@gmail.com, granitepub@gmail.com"
+PressReport_email="rterry@dailycorinthian.com, jmelton@jonesborosun.com, stjoenp@pmginmi.com "
+PlateReport_email="jglisson@dailycorinthian.com"
+
+press_pdfSent="$HOME/Dropbox/PressReports/pdf_files/sent"
+press_texSent="$HOME/Dropbox/PressReports/tex_files/sent"
+
+plate_pdfFiles="$HOME/Dropbox/PlateReports/"
+plate_pdfSent="$HOME/Dropbox/PlateReports/sent"
+
+#==========================================================================
+#==========================================================================
+
+main () {
+    clear
+    unite_pdf
+    email_pressReports
+    #email_plateReports
+    #printStatus
+}
+#==========================================================================
+#==========================================================================
+printStatus () {
+    echo -e "========================================="
+    echo -e "|    Starting -- Press Reports         ||"
+        echo -e "|    \033[33;5mNOTHING EMAIL!\033[0m                    ||"
+    echo -e "|    Emailing --                       ||"
+    echo -e "|    Finishing up                      ||"
+    echo -e "========================================="
+    echo -e
+    echo -e
+}
+
+#==========================================================================
+#==========================================================================
+email_plateReports() {
+    cd $plate_dir
+    
+    echo -e "========================================="
+    echo -e "|    Starting -- Plate Reports         ||"
+
+    message="Plate Report(s)"
+    ddate=$(date +%m/%d)
+    body=$message" "$ddate
+    attachment=$(find -maxdepth 1 -iname "*.pdf")
+
+    echo -e "|    Emailing --                       ||"
+    
+    if [ -z "$attachment" ];
+    then
+        echo -e "|    \033[33;5mNOTHING EMAIL!\033[0m                    ||"
+        echo -e "|    Finishing up                      ||"
+        echo -e "========================================="
+        echo -e
+        echo -e
+    else
+        #echo "$body" | neomutt -s "$body" "$testing_email" -a ${attachment//.\/}
+        echo "$body" | neomutt -s "$body" "$PlateReport_email" -a ${attachment//.\/}
+        #sleep 1s
+        
+        echo -e "|    Finishing up                      ||"
+        echo -e "========================================="
+        echo -e
+        echo -e
+
+        mv *.pdf $plate_pdfSent
+   fi
+    }
+#==========================================================================
+#==========================================================================
+email_pressReports() {
+    cd $press_dir
+
+    echo -e "========================================="
+    echo -e "|    Starting -- Press Reports         ||"
+
+    message="Press Report(s)"
+    ddate=$(date +%m/%d)
+    body=$message" "$ddate
+    attachment=$(find -maxdepth 1 -iname "*.pdf")
+
+    echo -e "|    Emailing --                       ||"
+
+    if [ -z "$attachment" ];
+    then
+        echo -e "|    \033[33;5mNOTHING EMAIL!\033[0m                    ||"
+        echo -e "|    Finishing up                      ||"
+        echo -e "========================================="
+        echo -e
+        echo -e
+    else
+        #echo "$body" | neomutt -s "$body" "$testing_email" -a ${attachment//.\/}
+        echo "$body" | neomutt -s "$body" "$PressReport_email" -a ${attachment//.\/}
+        #sleep 1s
+
+        echo -e "|    Finishing up                      ||"
+        echo -e "========================================="
+        echo -e
+        echo -e
+
+        mv *.tex $press_texSent
+        mv *.pdf $press_pdfSent
+     fi
+    }
+#==========================================================================
+#==========================================================================
+## -- Start program by calling the main function! -- ======================
+main
+
+
+#==========================================================================
+#==========================================================================
+# Working Example from command line
+# echo "testing" | neomutt -s 'Testing' dcpressroom1@gmail.com -a 071019_LeeCounty_A.pdf 071019_Thursday_A.pdf 071019_Tish_A.pdf
+

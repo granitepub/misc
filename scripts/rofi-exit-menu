@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#declare -a list=(lock logout suspend hibernate reboot shutdown)
+declare -a list=(lock logout reboot shutdown)
+
+
+selected=$((for f in "${list[@]}";do echo -e "$f "; done;) | rofi -dmenu -theme exit -p "Choose")
+
+i3exit-script $selected

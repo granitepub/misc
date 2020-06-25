@@ -1,0 +1,102 @@
+#!/bin/bash
+
+dataFile=${selected}
+outFile=$HOME/Dropbox/PurchaseOrders/WhatToOrder.csv
+priceDir=$HOME/Dropbox/PurchaseOrders/prices
+itemsArr=()
+flag=true
+yes_no="Yes\nNo"
+totalCost=0
+freightCost=25
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+main() {
+    while [ ${flag} ]
+    do
+        chooseAccounts
+        selectItems
+        getInfo
+        continueReport 
+    done
+
+    #sed -i '1s;^;Quantity, Item, Description, Cost, Price\n;' $outFile 
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+continueReport() {
+    answer=$(echo -e $yes_no | rofi -dmenu -theme bmenu -p "Continue?" )
+    if [[ $answer = "No" ]]; then
+        flag=false
+        saveInfo
+        exit
+    else
+        flag=True
+    fi
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+chooseAccounts() {
+    dataFile=$(find $priceDir -iname '*.csv' -printf "%f\n" | cut -d '.' -f1 | rofi -dmenu -theme bmenu -p "Choose Account")
+    [[ -z "$dataFile" ]] && exit
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+selectItems() {
+
+    selectedItem=$(cat $priceDir/${dataFile}.csv | awk -F ',' {'print $1'} | rofi -dmenu -theme sidebar_RollSearch -p  "Enter Item")
+    echo ${selectedItem}
+    [[ -z "$selectedItem" ]] && exit 
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+getNumberItems() {
+    numberItems=$(rofi -dmenu -theme bmenu -p "Number to Order: ")
+    echo ${numberItems}
+    [[ -z "$numberItems" ]] && exit
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+getInfo() {
+    line=$(ack  "${selectedItem}" $priceDir/${dataFile}.csv)
+    echo $line
+
+    item=$(echo "$line" | awk -F ',' '{print $2'})
+    desc=$(echo "$line" | awk -F ',' '{print $3'})
+    cost=$(echo "$line" | awk -F ',' '{print $4'})
+    
+    getNumberItems
+    total=`expr "$cost * $numberItems" | bc -l`
+    totalCost=`expr "$totalCost + $total" | bc -l`
+    itemsArr+=("$numberItems, $item, $desc, $cost, $total")
+    #echo $numberItems, $item, $desc, $cost, $total >> $outFile
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+saveInfo() {
+    echo "Quantity, Item, Description, Cost, Price" >> $outFile
+    for i in "${itemsArr[@]}"; do
+        echo "$i" >> $outFile
+    done
+    echo ", , , Freight, $freightCost" >> $outFile
+    totalCost=`expr "$totalCost + $freightCost" | bc -l`
+    echo ", , , Total, $totalCost" >> $outFile
+}
+
+#==============================================================================================================================
+#==============================================================================================================================
+
+main "${@}"

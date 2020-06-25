@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SCRIPT_FOLDER="$HOME/.scripts"
+SCRIPT_FILE="$SCRIPT_FOLDER/$1"
+
+if [[ -f $SCRIPT_FILE ]]; then
+    st -e nvim $SCRIPT_FILE
+else
+    echo -e '#!/bin/bash\n\n' > $SCRIPT_FILE
+    chmod +x $SCRIPT_FILE
+    st -e nvim  $SCRIPT_FILE
+fi
+
+

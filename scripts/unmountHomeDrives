@@ -1,0 +1,25 @@
+#!/bin/bash
+
+clear
+
+localDrives=("$HOME/MyBook_01" "$HOME/MyBook_02" "$HOME/Seagate")
+
+
+# to check your uid use command `id`
+# Connects to MyBook_01 
+
+for mnt_pnt in "${localDrives[@]}"
+do
+    #echo "${localDrives[$n]}"
+     sudo umount $mnt_pnt
+done
+
+echo "Cleaning up Mount Points!"
+
+for mnt_pnt in "${localDrives[@]}"
+do
+    rmdir $mnt_pnt
+done
+
+echo "Done!"
+

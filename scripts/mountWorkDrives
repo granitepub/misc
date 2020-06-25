@@ -1,0 +1,78 @@
+#!/bin/bash
+
+#      Author: Roger Delgado
+# Description: Script to connect to my home drives using sshfs with password
+#        Date: September 23, 2018
+# -------------------------------------------------------------------------------------------------
+
+
+clear # clear screen before we begin
+
+# Declare variables for script
+# -------------------------------------------------------------------------------------------------
+USERID="1000"
+HOSTS=("192.168.1.197" "192.168.1.217" "192.168.1.100")
+#USERS=("composing3" "rogerb" "composing")
+rootDrives=("Desktop" "../../Shared Items/Public/HiRes" "Composing")
+
+LabooGoss="Goss 737 x 586 x .20"
+LabooQuad="web leader 609.6 x 914.4 x .20"
+
+rootDrives=("Desktop" "Composing")
+localDrives=("$HOME/Comp3" "$HOME/HiRes" "$HOME/Comp" "$HOME/Goss" "$HOME/Quad")
+
+# -------------------------------------------------------------------------------------------------
+# create dir if it doesn't exists
+# -------------------------------------------------------------------------------------------------
+for drive in "${localDrives[@]}"
+    do
+        if [ ! -d "$drive" ]; then
+            umount $drive &> /dev/null
+            mkdir $drive
+        fi
+    done
+echo $LabooGoss
+echo $LabooQuad
+
+# -------------------------------------------------------------------------------------------------
+# Mounting Laboo mount points
+# -------------------------------------------------------------------------------------------------
+echo
+echo "==============================="
+echo " Mounting Laboo Mount Points........."
+echo "==============================="
+
+#***************************************************************************************
+#***************************************************************************************
+#***************************************************************************************
+#sudo mount -t cifs //192.168.1.227/"${LabooGoss}" /$HOME/Goss -o username=guest,password=""
+#sudo mount -t cifs //192.168.1.227/"${LabooQuad}" /$HOME/Quad -o username=guest,password=""
+curlftpfs ftp://64.233.145.52 output -o user=pdc:pdc
+#***************************************************************************************
+#***************************************************************************************
+#***************************************************************************************
+
+mount_afp 'afp://composing:comp@192.168.1.100/Composing' /$HOME/Comp
+mount_afp 'afp://HiRes:hires@192.168.1.217/HiRes' /$HOME/HiRes
+mount_afp 'afp://Composing3:COMP3@192.168.1.197/Desktop' /$HOME/Comp3
+
+
+# -------------------------------------------------------------------------------------------------
+# to check your uid use command `id`
+# Connects to my home drives 
+# -------------------------------------------------------------------------------------------------
+#for (( n=0; n<=${#HOSTS[@]}-1; n++ ))
+#do
+    ##echo "${rootDrives[$n]} and ${localDrives[$n]}"
+    #if mountpoint -q ${localDrives[$n]}; then
+        #echo "Drive already mounted"
+    #else
+        #if ( sshfs -o uid=$USERID,ssh_command='ssh -i ~/.ssh/id_rsa',workaround=rename ${USERS[$n]}@${HOSTS[$n]}:"${rootDrives[$n]}" ${localDrives[$n]} ); then
+            #echo "${localDrives[$n]} was Mounted!"
+        #else
+            #echo "${localDrives[$n]} was not Mounted!"
+            #exit 1
+        #fi
+    #fi
+#done
+#

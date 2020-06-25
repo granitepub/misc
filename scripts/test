@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for account in $(ls ~/.mail)
+do
+	#List unread messages newer than last mailsync and count them
+	newcount=$(find ~/.mail/"$account"/Inbox/new/ -type f -newer ~/.config/mutt/etc/.mailsynclastrun 2> /dev/null | wc -l)
+	if [ "$newcount" -gt "0" ]
+	then
+		echo "$account" "$newcount" &
+	fi
+    done

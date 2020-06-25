@@ -1,0 +1,17 @@
+#!/bin/bash
+
+$oldIFS=$IFS
+
+
+choice=$(FindRollInfo | rofi -dmenu -theme sidebar_RollSearch -i  -width 30em -font Mono\ 15 -p "Roll")
+
+set $choice
+
+roll=$1
+rollStart=$2
+
+printf "    \\RollInfo{%s}{<++>}{<++>}{%s}\n\n    <++>\n" $rollStart $roll | xclip -selection clipboard
+
+pgrep -x dunst >/dev/null && notify-send "'$roll - $rollStart' copied to clipboard."
+
+$IFS=$oldIFS

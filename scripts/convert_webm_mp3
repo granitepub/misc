@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#for FILE in *.webm; do
+    #echo -e "Processing video '\e[32m$FILE\e[0m'";
+    #ffmpeg -i "${FILE}" -vn -ab 128k -ar 44100 -y "${FILE%.webm}.mp3";
+#done;
+
+
+#UPDATE:
+
+#The following command will find all webm files that are in the current directory and in all sub-folders and extract the audio to mp3 format.
+1
+	
+find . -type f -iname "*.webm" -exec bash -c 'FILE="$1"; ffmpeg -i "${FILE}" -vn -ab 128k -ar 44100 -y "${FILE%.webm}.mp3";' _ '{}' \;
+
+#The filename of the audio file will be the same as the webm video with the correct extension. The webm extension will be removed and replaced by the mp3 extension e.g hi.webm will become hi.mp3
